@@ -1,4 +1,6 @@
-# pr 1
+------------------------------------------------------------
+#1 TOKENIZATION
+-------------------------------------------------------------
 
 import nltk
 nltk.download('punkt')
@@ -14,8 +16,236 @@ tokens = tokenize_input(input_text)
 print("input_text:",input_text)
 print("tokrens:",tokens)
 
+-----------------------------------------------------------------------------
+#2.THREE CONSECUTIVE ONE
+-----------------------------------------------------------------------------
 
-[18/03, 7:27 am]: exp 3 : GENERATE DERIVATION SECQUENCE LANGUAGE 
+def accepts_three_consecutive_ones(input_str):
+    current_state = 'q0'
+
+    for symbol in input_str:
+        if current_state == 'q0' and symbol == '1':
+            current_state = 'q1'
+        elif current_state == 'q1' and symbol == '1':
+            current_state = 'q2'
+        elif current_state == 'q2' and symbol == '1':
+            return True
+        else:
+            current_state = 'q0'
+
+    return False
+
+# Example usage:
+input_str = input("Enter a binary string: ")
+result = accepts_three_consecutive_ones(input_str)
+
+if result:
+    print("Accepted: The string contains three consecutive '1's.")
+else:
+    print("Rejected: The string does not contain three consecutive '1's.")
+
+
+
+---------------------------------------------------------------------------------
+#3. ENDING WITH 101
+---------------------------------------------------------------------------------
+
+def accept_binary_ending_with_101(input_str):
+    # Check if the string ends with '101'
+    if input_str.endswith('101'):
+        return True
+    else:
+        return False
+
+# Main function to run the program
+def main():
+    while True:
+        input_str = input("Enter a binary string: ")
+
+        # Check if the input string is empty
+        if not input_str:
+            print("Empty string. Please enter a binary string.")
+            continue
+
+        # Check if the input string ends with '101'
+        if accept_binary_ending_with_101(input_str):
+            print("Accepted")
+            break
+        else:
+            print("Rejected. Input string does not end with '101'. Try again.")
+
+# Run the main function
+if __name__ == "__main__":
+    main()
+
+------------------------------------------------------------------------------------------
+#4.DIVISIBLE BY 2
+------------------------------------------------------------------------------------------
+def is_divisible_by_2(input_str):
+    current_state = 'q0'
+
+    for digit in input_str:
+        if current_state == 'q0' and digit in '02468':
+            current_state = 'q1'
+        elif current_state == 'q1' and digit in '02468':
+            current_state = 'q0'
+        else:
+            return False
+
+    return current_state == 'q0'
+
+# Example usage:
+input_str = input("Enter a decimal number: ")
+
+# Check if the entered number is divisible by 2
+result = is_divisible_by_2(input_str)
+
+if result:
+    print("Accepted: The decimal number is divisible by 2.")
+else:
+    print("Rejected: The decimal number is not divisible by 2.")
+
+-------------------------------------------------------------------------------
+#5 EQUAL NO OF 1'S AND 0'S
+--------------------------------------------------------------------------------
+
+def accept_equal_ones_and_zeros(input_str):
+    # Count the number of '1's and '0's
+    count_ones = input_str.count('1')
+    count_zeros = input_str.count('0')
+
+    # Check if the counts are equal
+    if count_ones == count_zeros:
+        return True
+    else:
+        return False
+
+# Main function to run the program
+def main():
+    while True:
+        input_str = input("Enter a string of 1's and 0's: ")
+
+        # Check if the input string is empty
+        if not input_str:
+            print("Empty string. Please enter a string.")
+            continue
+
+        # Check if the input string has an equal number of '1's and '0's
+        if accept_equal_ones_and_zeros(input_str):
+            print("Accepted")
+            break
+        else:
+            print("Rejected. Input string does not have an equal number of '1's and '0's. Try again.")
+
+# Run the main function
+if __name__ == "__main__":
+    main()
+
+
+-------------------------------------------------------------------------------
+#6 COUNT NO OF 1'S AND 0'S
+--------------------------------------------------------------------------------
+
+def count_ones_and_zeros(input_str):
+    # Initialize counters for '1's and '0's
+    count_ones = 0
+    count_zeros = 0
+
+    # Iterate through each character in the input string
+    for char in input_str:
+        if char == '1':
+            count_ones += 1
+        elif char == '0':
+            count_zeros += 1
+    
+    return count_ones, count_zeros
+
+# Main function to run the program
+def main():
+    input_str = input("Enter a string of 1's and 0's: ")
+
+    # Check if the input string is empty
+    if not input_str:
+        print("Empty string. Please enter a string.")
+    else:
+        # Count the number of '1's and '0's in the input string
+        ones, zeros = count_ones_and_zeros(input_str)
+        print("Number of '1's:", ones)
+        print("Number of '0's:", zeros)
+
+# Run the main function
+if __name__ == "__main__":
+    main()
+
+---------------------------------------------------------------------------------------------
+#.7 Turing machine
+---------------------------------------------------------------------------------------------
+
+
+import pandas as pd
+
+def check_string(input_str):
+    df = pd.DataFrame(list(input_str), columns=['char'])
+
+    # Count the occurrences of each character
+    count_a = df[df['char'] == 'a'].shape[0]
+    count_b = df[df['char'] == 'b'].shape[0]
+    count_c = df[df['char'] == 'c'].shape[0]
+    print("Number of 'a's:", count_a)
+    print("Number of 'b's:", count_b)
+    print("Number of 'c's:", count_c)
+    return count_a == count_b == count_c and count_a > 0
+  
+input_str = input("Enter a string to check: ")
+if check_string(input_str):
+    print("Accepted")
+else:
+    print("Rejected")
+
+-------------------------------------------------------------------------
+#8. for generating regular expressions for regular grammar
+--------------------------------------------------------------------------
+import re
+
+def generate_regex_from_grammar(grammar):
+    regex_dict = {}
+
+    for rule in grammar:
+        non_terminal, production = rule.split(' -> ')
+        if non_terminal not in regex_dict:
+            regex_dict[non_terminal] = set()
+
+        for symbol in production.split('|'):
+            # Handle terminals (characters)
+            if symbol.isalpha() and len(symbol) == 1:
+                regex_dict[non_terminal].add(re.escape(symbol))
+
+            # Handle non-terminals
+            else:
+                regex_dict[non_terminal].add(symbol)
+
+    # Convert the sets to regular expressions
+    for non_terminal, expressions in regex_dict.items():
+        regex_dict[non_terminal] = '|'.join(expressions)
+
+    return regex_dict
+
+# Example usage:
+grammar = [
+    "S -> aA|bB",
+    "A -> a|cA",
+    "B -> b|d"
+]
+
+regex_dict = generate_regex_from_grammar(grammar)
+
+# Output the generated regular expressions
+for non_terminal, regex in regex_dict.items():
+    print(f"{non_terminal} -> {regex}")
+
+--------------------------------------------------------------------------------
+# 9. generating derivation sequence / language
+----------------------------------------------------------------------------------
 
 def generate_derivation(grammar, start_symbol, sequence, max_depth=10):
     derivation_sequences = []
@@ -58,123 +288,6 @@ for i, deriv_seq in enumerate(derivation_sequences, 1):
 
 
 
-[18/03, 7:27 am] : exp 4 : ACCEPTS_THREE_CONSECUTIVE_ONES
-
-
-def accepts_three_consecutive_ones(input_str):
-    current_state = 'q0'
-
-    for symbol in input_str:
-        if current_state == 'q0' and symbol == '1':
-            current_state = 'q1'
-        elif current_state == 'q1' and symbol == '1':
-            current_state = 'q2'
-        elif current_state == 'q2' and symbol == '1':
-            return True
-        else:
-            current_state = 'q0'
-
-    return False
-
-# Example usage:
-input_str = input("Enter a binary string: ")
-result = accepts_three_consecutive_ones(input_str)
-
-if result:
-    print("Accepted: The string contains three consecutive '1's.")
-else:
-    print("Rejected: The string does not contain three consecutive '1's.")
 
 
 
-
- exp 2 : GENERATE REGULAR EXPRESSION TO GRAMMER
-
-import re
-
-def generate_regex_from_grammar(grammar):
-    regex_dict = {}
-
-    for rule in grammar:
-        non_terminal, production = rule.split(' -> ')
-        if non_terminal not in regex_dict:
-            regex_dict[non_terminal] = set()
-
-        for symbol in production.split('|'):
-            # Handle terminals (characters)
-            if symbol.isalpha() and len(symbol) == 1:
-                regex_dict[non_terminal].add(re.escape(symbol))
-
-            # Handle non-terminals
-            else:
-                regex_dict[non_terminal].add(symbol)
-
-    # Convert the sets to regular expressions
-    for non_terminal, expressions in regex_dict.items():
-        regex_dict[non_terminal] = '|'.join(expressions)
-
-    return regex_dict
-
-# Example usage:
-grammar = [
-    "S -> aA|bB",
-    "A -> a|cA",
-    "B -> b|d"
-]
-
-regex_dict = generate_regex_from_grammar(grammar)
-
-# Output the generated regular expressions
-for non_terminal, regex in regex_dict.items():
-    print(f"{non_terminal} -> {regex}")
-
-
-
-###₹₹#₹₹₹₹₹   input a^n b^n c^n *""""""
-
-import pandas as pd
-
-def check_string(input_str):
-	df = pd.DataFrame(list(input_str), columns=['char'])
-
-  # Count the occurrences of each character
-  count_a = df[df['char'] == 'a'].shape[0]
-  count_b = df[df['char'] == 'b'].shape[0]
-  count_c = df[df['char'] == 'c'].shape[0]
-  print("Number of 'a's:", count_a)
-  print("Number of 'b's:", count_b)
-  print("Number of 'c's:", count_c)
-  return count_a == count_b == count_c and count_a > 0
-  
-input_str = input("Enter a string to check: ")
-if check_string(input_str):
-  print("Accepted")
-else:
-  print("Rejected")
-
-
-exp 6 :
-
-def is_divisible_by_2(input_str):
-    current_state = 'q0'
-
-    for digit in input_str:
-        if current_state == 'q0' and digit in '02468':
-            current_state = 'q1'
-        elif current_state == 'q1' and digit in '02468':
-            current_state = 'q0'
-        else:
-            return False
-
-    return current_state == 'q0'
-
-# Example usage:
-input_str = input("Enter a decimal number: ")
-
-# Check if the entered number is divisible by 2
-result = is_divisible_by_2(input_str)
-
-if result:
-    print("Accepted: The decimal number is divisible by 2.")
-else:
-    print("Rejected: The decimal number is not divisible by 2.")
