@@ -1,293 +1,138 @@
-------------------------------------------------------------
-#1 TOKENIZATION
--------------------------------------------------------------
+1. GPS Module Interfacing with Raspberry Pi
 
-import nltk
-nltk.download('punkt')
-from nltk.tokenize import word_tokenize
+import serial #import serial pacakge
+from time import sleep
+import webbrowser #import package for opening link in browser
+import sys #import system package
+def GPS_Info():
+ global NMEA_buff
+ global lat_in_degrees
+ global long_in_degrees
+ nmea_time = []
+ nmea_latitude = []
+ nmea_longitude = []
+ nmea_time = NMEA_buff[0] #extract time from GPGGA string
+ nmea_latitude = NMEA_buff[1] #extract latitude from GPGGA string
+ nmea_longitude = NMEA_buff[3] #extract longitude from GPGGA string
 
-def tokenize_input(input_text):
-    tokens = word_tokenize(input_text)
-    return tokens
+ print("NMEA Time: ", nmea_time,'\n')
+26 EDKITS ELECTRONICS
+ print ("NMEA Latitude:", nmea_latitude,"NMEA Longitude:", nmea_longitude,'\n')
 
-input_text = "hi my name is ab"
-tokens = tokenize_input(input_text)
+ lat = float(nmea_latitude) #convert string into float for calculation
+ longi = float(nmea_longitude) #convertr string into float for calculation
+ lat_in_degrees = convert_to_degrees(lat) #get latitude in degree decimal format
+ long_in_degrees = convert_to_degrees(longi) #get longitude in degree decimal format
 
-print("input_text:",input_text)
-print("tokrens:",tokens)
+#convert raw NMEA string into degree decimal format
+def convert_to_degrees(raw_value):
+ decimal_value = raw_value/100.00
+ degrees = int(decimal_value)
+ mm_mmmm = (decimal_value - int(decimal_value))/0.6
+ position = degrees + mm_mmmm
+ position = "%.4f" %(position)
+ return position
 
------------------------------------------------------------------------------
-#2.THREE CONSECUTIVE ONE
------------------------------------------------------------------------------
+gpgga_info = "$GPGGA,"
+ser = serial.Serial ("/dev/ttyUSB0") #Open port with baud rate
+GPGGA_buffer = 0
+NMEA_buff = 0
+lat_in_degrees = 0
+long_in_degrees = 0
+try:
+ while True:
+ received_data = (str)(ser.readline ()) #read NMEA string received
+ GPGGA_data_available = received_data.find(gpgga_info) #check for NMEA GPGGA string
+ if (GPGGA_data_available>0):
+ GPGGA_buffer = received_data.split("$GPGGA,",1)[1] #store data coming after "$GPGGA,"
+ NMEA_buff = (GPGGA_buffer.split(',')) #store comma separated data in buffer
+ GPS_Info() #get time, latitude, longitude
+ print("lat in degrees:", lat_in_degrees," long in degree: ", long_in_degrees, '\n')
+ map_link = 'http://maps.google.com/?q=' + lat_in_degrees + ',' + long_in_degrees
+#create link to plot location on Google map
+ print("<<<<<<<<press ctrl+c to plot location on google maps>>>>>>\n")
+#press ctrl+c to plot on map and exit
+ print("------------------------------------------------------------\n")
 
-def accepts_three_consecutive_ones(input_str):
-    current_state = 'q0'
+except KeyboardInterrupt:
+ webbrowser.open(ma p_link) #open current position information in google map
+ sys.exit(0)
+#end of file
 
-    for symbol in input_str:
-        if current_state == 'q0' and symbol == '1':
-            current_state = 'q1'
-        elif current_state == 'q1' and symbol == '1':
-            current_state = 'q2'
-        elif current_state == 'q2' and symbol == '1':
-            return True
-        else:
-            current_state = 'q0'
-
-    return False
-
-# Example usage:
-input_str = input("Enter a binary string: ")
-result = accepts_three_consecutive_ones(input_str)
-
-if result:
-    print("Accepted: The string contains three consecutive '1's.")
-else:
-    print("Rejected: The string does not contain three consecutive '1's.")
-
-
-
----------------------------------------------------------------------------------
-#3. ENDING WITH 101
----------------------------------------------------------------------------------
-
-def accept_binary_ending_with_101(input_str):
-    # Check if the string ends with '101'
-    if input_str.endswith('101'):
-        return True
-    else:
-        return False
-
-# Main function to run the program
-def main():
-    while True:
-        input_str = input("Enter a binary string: ")
-
-        # Check if the input string is empty
-        if not input_str:
-            print("Empty string. Please enter a binary string.")
-            continue
-
-        # Check if the input string ends with '101'
-        if accept_binary_ending_with_101(input_str):
-            print("Accepted")
-            break
-        else:
-            print("Rejected. Input string does not end with '101'. Try again.")
-
-# Run the main function
-if __name__ == "__main__":
-    main()
-
-------------------------------------------------------------------------------------------
-#4.DIVISIBLE BY 2
-------------------------------------------------------------------------------------------
-def is_divisible_by_2(input_str):
-    current_state = 'q0'
-
-    for digit in input_str:
-        if current_state == 'q0' and digit in '02468':
-            current_state = 'q1'
-        elif current_state == 'q1' and digit in '02468':
-            current_state = 'q0'
-        else:
-            return False
-
-    return current_state == 'q0'
-
-# Example usage:
-input_str = input("Enter a decimal number: ")
-
-# Check if the entered number is divisible by 2
-result = is_divisible_by_2(input_str)
-
-if result:
-    print("Accepted: The decimal number is divisible by 2.")
-else:
-    print("Rejected: The decimal number is not divisible by 2.")
-
--------------------------------------------------------------------------------
-#5 EQUAL NO OF 1'S AND 0'S
---------------------------------------------------------------------------------
-
-def accept_equal_ones_and_zeros(input_str):
-    # Count the number of '1's and '0's
-    count_ones = input_str.count('1')
-    count_zeros = input_str.count('0')
-
-    # Check if the counts are equal
-    if count_ones == count_zeros:
-        return True
-    else:
-        return False
-
-# Main function to run the program
-def main():
-    while True:
-        input_str = input("Enter a string of 1's and 0's: ")
-
-        # Check if the input string is empty
-        if not input_str:
-            print("Empty string. Please enter a string.")
-            continue
-
-        # Check if the input string has an equal number of '1's and '0's
-        if accept_equal_ones_and_zeros(input_str):
-            print("Accepted")
-            break
-        else:
-            print("Rejected. Input string does not have an equal number of '1's and '0's. Try again.")
-
-# Run the main function
-if __name__ == "__main__":
-    main()
-
-
--------------------------------------------------------------------------------
-#6 COUNT NO OF 1'S AND 0'S
---------------------------------------------------------------------------------
-
-def count_ones_and_zeros(input_str):
-    # Initialize counters for '1's and '0's
-    count_ones = 0
-    count_zeros = 0
-
-    # Iterate through each character in the input string
-    for char in input_str:
-        if char == '1':
-            count_ones += 1
-        elif char == '0':
-            count_zeros += 1
-    
-    return count_ones, count_zeros
-
-# Main function to run the program
-def main():
-    input_str = input("Enter a string of 1's and 0's: ")
-
-    # Check if the input string is empty
-    if not input_str:
-        print("Empty string. Please enter a string.")
-    else:
-        # Count the number of '1's and '0's in the input string
-        ones, zeros = count_ones_and_zeros(input_str)
-        print("Number of '1's:", ones)
-        print("Number of '0's:", zeros)
-
-# Run the main function
-if __name__ == "__main__":
-    main()
-
----------------------------------------------------------------------------------------------
-#.7 Turing machine
----------------------------------------------------------------------------------------------
-
-
-import pandas as pd
-
-def check_string(input_str):
-    df = pd.DataFrame(list(input_str), columns=['char'])
-
-    # Count the occurrences of each character
-    count_a = df[df['char'] == 'a'].shape[0]
-    count_b = df[df['char'] == 'b'].shape[0]
-    count_c = df[df['char'] == 'c'].shape[0]
-    print("Number of 'a's:", count_a)
-    print("Number of 'b's:", count_b)
-    print("Number of 'c's:", count_c)
-    return count_a == count_b == count_c and count_a > 0
-  
-input_str = input("Enter a string to check: ")
-if check_string(input_str):
-    print("Accepted")
-else:
-    print("Rejected")
-
--------------------------------------------------------------------------
-#8. for generating regular expressions for regular grammar
---------------------------------------------------------------------------
-import re
-
-def generate_regex_from_grammar(grammar):
-    regex_dict = {}
-
-    for rule in grammar:
-        non_terminal, production = rule.split(' -> ')
-        if non_terminal not in regex_dict:
-            regex_dict[non_terminal] = set()
-
-        for symbol in production.split('|'):
-            # Handle terminals (characters)
-            if symbol.isalpha() and len(symbol) == 1:
-                regex_dict[non_terminal].add(re.escape(symbol))
-
-            # Handle non-terminals
-            else:
-                regex_dict[non_terminal].add(symbol)
-
-    # Convert the sets to regular expressions
-    for non_terminal, expressions in regex_dict.items():
-        regex_dict[non_terminal] = '|'.join(expressions)
-
-    return regex_dict
-
-# Example usage:
-grammar = [
-    "S -> aA|bB",
-    "A -> a|cA",
-    "B -> b|d"
-]
-
-regex_dict = generate_regex_from_grammar(grammar)
-
-# Output the generated regular expressions
-for non_terminal, regex in regex_dict.items():
-    print(f"{non_terminal} -> {regex}")
-
---------------------------------------------------------------------------------
-# 9. generating derivation sequence / language
 ----------------------------------------------------------------------------------
+2..GPIO: Program the 8x8 LED Grid Module
+--------------------------------------------------------------------------------------
 
-def generate_derivation(grammar, start_symbol, sequence, max_depth=10):
-    derivation_sequences = []
-
-    def derive(current_sequence, depth):
-        if depth == 0:
-            return
-
-        for rule in grammar:
-            non_terminal, production = rule.split(' -> ')
-            alternatives = production.split('|')
-
-            for alt in alternatives:
-                if current_sequence.startswith(alt):
-                    new_sequence = current_sequence.replace(alt, non_terminal, 1)
-                    derivation_sequences.append(new_sequence)
-                    derive(new_sequence, depth - 1)
-
-    derive(sequence, max_depth)
-
-    return derivation_sequences
-
-# Example usage:
-grammar = [
-    "S -> AB",
-    "A -> a|ε",
-    "B -> b"
-]
-
-start_symbol = 'S'
-target_sequence = 'ab'
-
-derivation_sequences = generate_derivation(grammar, start_symbol, target_sequence)
-
-# Output the generated derivation sequences
-for i, deriv_seq in enumerate(derivation_sequences, 1):
-    print(f"Derivation Sequence {i}: {deriv_seq}")
+from luma.led_matrix.device import max7219
+from luma.core.interface.serial import spi, noop
+from luma.core.render import canvas
+from luma.core.virtual import viewport
+from luma.core.legacy import text, show_message
+from luma.core.legacy.font import proportional, CP437_FONT, TINY_FONT, SINCLAIR_FONT, LCD_FONT
+from datetime import datetime
+import time
+serial = spi(port=0, device=0, gpio=noop())
+device = max7219(serial, cascaded=1, block_orientation=-90, blocks_arranged_in_reverse_order=True)
+device.contrast(16)
+def test():
+ now = datetime.now()
+# dt1_string = now.strftime("%H:%M:%S")
+ dt1_string = now.strftime("%I:%M:%S")
+ with canvas(device) as draw:
+ text(draw, (3, 1), dt1_string, fill="white", font=proportional(TINY_FONT))
+# show_message(device, "Hello EDKITS", fill="red",font=(CP437_FONT),scroll_delay=0.08)
+while True:
+ test()
 
 
+3.TELEGRAM
 
 
+import sys
+import time
+import random
+import datetime
+import telepot
+import RPi.GPIO as GPIO
+from telepot.loop import MessageLoop
+red=23 # connect red led at pin 23 of raspberry pi
+now=datetime.datetime.now()
+GPIO.setmode(GPIO.BOARD)
+GPIO.setwarnings(False)
+GPIO.setup(red,GPIO.OUT)
+GPIO.output(red,0)
+def action(msg):
+ chat_id = msg['chat']['id']
+ command = msg['text']
+ print ('Got command: %s' %command)
+ if 'On' in command:
+ message="Turn On"
+ message=message+" red"
+ GPIO.output(red,1)
+ bot.sendMessage(chat_id,message)
+ if 'Off' in command:
+ message="Turn Off"
+ message=message+" red"
+ GPIO.output(red,0)
+ bot.sendMessage(chat_id, message)
+bot = telepot.Bot('626665131:AAHsNzQbqSj9GZ9-w2t4I') #paste your bot tokan here.
+print(bot.getMe())
+MessageLoop(bot,action).run_as_thread()
+print ('I am listening...')
+while 1:
+ time.sleep(10)
 
 
+/// camera
 
 
+from time import sleep
+from picamera import PiCamera
+camera = PiCamera()
+camera.resolution = (1280, 720) # selecting resolution 1280x720 px
+camera.start_preview()
+# Camera warm-up time
+sleep(2)
+camera.capture('/home/pi/Pictures/newImage.jpg') #capture and save image at specified location
+camera.stop_preview()
+#end of code
