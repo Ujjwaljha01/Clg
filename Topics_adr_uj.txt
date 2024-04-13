@@ -1,0 +1,52 @@
+PROGRAM 1 A: write a program using kotlin to implement control structures and loops
+PROGRAM 1 B: Write a program to implement object-oriented concepts in Kotlin.
+Program 2(i)A-Program For Button
+Program 2(i)B-Program For EditText
+Program 2(i)c-Program For TextView
+
+
+Program 2(ii)-
+Write an android application demonstrating response to event/user interaction for
+a. Checkbox
+b. Radio button
+c. Button
+d. Spinner
+
+
+Program 3(i)-Create an application to create Image Flipper and Image Gallery. On click on
+the image display the information about the image.
+
+Program 3(ii)-
+Create an application to use Gridview for shopping cart application
+
+
+
+Program 4(ii)-Create an application to demonstrate shared preferences
+
+Program 5(i)-Create an Android application to demonstrate the use of Broadcast listeners.
+Proram 5(ii)-Create an Android application to create and use services
+
+
+Program 6(ii)-Create an Android application to display canvas and allow the user to draw on
+it.
+
+
+Program 7(i)-
+Create a media player application in android that plays audio. Implement play, pause, and
+loop features
+
+Program 7(ii)-Create an Android application to use a camera and capture image/video and
+display them on the screen.
+
+
+Program 8(i)-Create an android application to implement Asynctask and threading concepts
+
+Program 8(ii)b-Program For ContextMenu
+
+
+Program 9- Create an Android application to record the current location. Based on the current
+location allow the user to use some useful services/applications
+
+
+Program 10- Create a suitable Android application to store and retrieve data in the SQLite
+database.
